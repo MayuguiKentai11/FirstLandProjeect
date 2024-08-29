@@ -1,0 +1,521 @@
+﻿
+@{
+    ViewBag.Title = "Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/Content/CategoriesMaintainmentEdition.css" />
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="index.html">Mantenimiento</a></li>
+    <li class="breadcrumb-item active">Categorias</li>
+</ol>
+
+
+<div class="card">
+
+    <div class="card-header">
+        <i class="fas fa-users me-1"></i>Lista de Categorias
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <button type="button" id="btn-agregar" class="btn btn-info" @*data-bs-toggle="modal"*@ onclick="abrirModaal()" @*data-bs-target="#ModalAdmin"*@>Crear Nueva Categoria</button>
+            </div>
+        </div>
+        <hr />
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <form id="search" class="form-inline my-2 my-lg-0">
+                    <input id="search-text" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+
+
+        <table id="table" class="table table-dark table-bordered table-hover" style="width: 100%">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descripcion</th>
+                    <th>Activo</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody id="tableee">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalCategoryCreate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-black text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar nueva Categoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form>
+
+                    <div class="row">
+                        <div class="col sm-6">
+                            <label>Ingrese Nombre:</label>
+                            <input type="text" id="nombre-category-created" placeholder="Nombre..." autocomplete="off" />
+                        </div>
+                        <div class="col sm-6">
+                            <label>Activo:</label>
+                            <select id="active-category-created" class="form-select">
+                                <option value="1">Sí</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div id="mensajeErrorCreate" class="alert alert-danger" role="alert">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" id="btnCancelarCreate" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
+                        <button type="button" id="btnCreate" class="btn btn-primary">AGREGAR</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="ModalCategoryEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-black text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Cuenta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form>
+                    <div class="row">
+                        <div class="col sm-6">
+                            <label>ID:</label>
+                            <input id="id-category-edited" type="text" autocomplete="off" readonly />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                            <div class="col sm-6">
+                                <label>Ingrese Nombre:</label>
+                                <input type="text" id="nombre-category-edited" placeholder="Nombre..." autocomplete="off" required />
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label>Activo:</label>
+                                <select id="active-category-edited" class="form-select">
+                                    <option value="1">Sí</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div id="mensajeErrorEditar" class="alert alert-danger" role="alert">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnCancelarEdit" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
+                        <button type="button" id="btnEditar" class="btn btn-primary">EDIT</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="ModalCategoryDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-black text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>CATEGORY'S ID AFFECTED:</label>
+                            <input type="text" id="id-category-deleted" autocomplete="off" readonly />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" id="btnDelete" class="btn btn-primary">ACCEPT</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        jQuery.ajax({
+            url: '@Url.Action("ListCategories", "Maintainer")',
+            type: "GET",
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                console.log(data);
+                var htmll = '';
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].activeCategory) {
+                        htmll += '<tr>' +
+                            '<td id="colID"> ' + data[i].Id + '</td>' +
+                            '<td id="colName"> ' + data[i].descriptionCategory + '</td>' +
+                            '<td id="colActive">' + '<span id="span-sign" class="badge bg-primary">' + 'Si' + '</span>' + '</td>' +
+                            '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                            '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                            '</tr>'
+                    }
+                    else {
+                        htmll += '<tr>' +
+                            '<td id="colID"> ' + data[i].Id + '</td>' +
+                            '<td id="colName">' + data[i].descriptionCategory + '</td>' +
+                            '<td id="colActive"> ' + '<span id="span-sign" class="badge bg-danger">' + 'No' + '</span>' + '</td>' +
+                            '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                            '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                            '</tr>'
+                    }
+                }
+                $("#tableee").html(htmll);
+            }
+        });
+
+
+            // MOSTRAR MODAL DE CREAR
+            $(".card-body").on("click", '#btn-agregar', function () {
+                $("#mensajeErrorCreate").hide();
+                $("#ModalCategoryCreate").modal("show")
+            });
+
+            // MOSTRAR MODAL DE EDITAR
+            $("table tbody").on("click", '#btn-editar', function () {
+            var stringData = "";
+            var valueAuxActive = ""; // Cadena
+            var valueActive = true; // Booleano
+
+
+            $("#mensajeErrorEditar").hide();
+            $(this).parents("tr").find("#colID").each(function () {
+                stringData = $(this).html();
+            })
+                $("#id-category-edited").val(stringData);
+
+            $(this).parents("tr").find("#colName").each(function () {
+                stringData = $(this).html();
+            })
+            $("#nombre-category-edited").val(stringData);
+
+            $(this).parents("tr").find("#colActive").each(function () {
+                valueAuxActive = $(this).html();
+            })
+                if (valueAuxActive == '<span id="span-sign" class="badge bg-primary">Si</span>') {
+                    valueActive = true;
+                }
+                else {
+                    valueActive = false;
+                }
+
+            $("#active-category-edited").val(valueActive == true ? 1 : 0);
+
+            $("#ModalCategoryEdit").modal("show")
+            });
+
+            // MOSTRAR MODAL DE ELIMINAR
+            $("table tbody").on("click", '#btn-eliminar', function () {
+                var stringData = "";
+                $(this).parents("tr").find("#colID").each(function () {
+                    stringData = $(this).html();
+                })
+                $("#id-category-deleted").val(stringData);
+                $("#ModalCategoryDelete").modal("show")
+            });
+
+            // CERRAR MODAL DE CREAR
+            $("#ModalCategoryCreate").on("click", '#btnCancelarCreate', function () {
+                $("#nombre-category-created").val("");
+                $("#active-category-created").val(1);
+                $(this).modal("hide")
+            });
+
+            // CERRAR MODAL DE EDITAR
+            $("#ModalCategoryEdit").on("click", '#btnCancelarEdit', function () {
+                $("#id-category-edited").val("");
+                $("#nombre-category-edited").val("");
+                $("#active-category-edited").val(1);
+                $(this).modal("hide")
+            });
+
+            // CERRAR MODAL DE ELIMINAR
+            $("#ModalCategoryDelete").on("click", '#btnCancelarDeleted', function () {
+                $("#id-category-deleted").val("");
+                $(this).modal("hide")
+            });
+
+            // FALTA LO QUE ESTA ABAJO
+
+
+            // AGREGAR CATEGORIA
+            $("#ModalCategoryCreate").on("click", '#btnCreate', function () {
+                var Category = {
+                    descriptionCategory : $("#nombre-category-created").val(),
+                    activeCategory: $("#active-category-created").val() == 1 ? true : false
+                };
+
+                jQuery.ajax({
+                    url: '@Url.Action("CreateCategory", "Maintainer")',
+                    type: "POST",
+                    data: JSON.stringify({ category: Category }),
+                    datatype: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $(".modal-body").LoadingOverlay("hide");
+
+                        if (data.message != "") { // SI HAY ERRORES Y COINCIDENCIAS
+                            $("#mensajeErrorCreate").text(data.message);
+                            $("#mensajeErrorCreate").show();
+                        }
+                        if (data.message == "") { // SI NO HAY ERRORES O COINCIDENCIAS
+                            swal("AGREGADO CORRECTAMENTE!", "SUCCESS", "success")
+                            $("#nombre-category-created").val("");
+                            $("#active-category-created").val(1);
+                            $("#ModalCategoryCreate").modal("hide")
+                        }
+
+                        jQuery.ajax({
+                            url: '@Url.Action("ListCategories", "Maintainer")',
+                            type: "GET",
+                            datatype: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                console.log(data);
+                                var htmll = '';
+                                for (var i = 0; i < data.length; i++) {
+                                    if (data[i].activeCategory) {
+                                        htmll += '<tr>' +
+                                            '<td id="colID"> ' + data[i].Id + '</td>' +
+                                            '<td id="colName"> ' + data[i].descriptionCategory + '</td>' +
+                                            '<td id="colActive">' + '<span id="span-sign" class="badge bg-primary">' + 'Si' + '</span>' + '</td>' +
+                                            '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                            '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                            '</tr>'
+                                    }
+                                    else {
+                                        htmll += '<tr>' +
+                                            '<td id="colID"> ' + data[i].Id + '</td>' +
+                                            '<td id="colName">' + data[i].descriptionCategory + '</td>' +
+                                            '<td id="colActive"> ' + '<span id="span-sign" class="badge bg-danger">' + 'No' + '</span>' + '</td>' +
+                                            '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                            '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                            '</tr>'
+                                    }
+                                }
+                                $("#tableee").html(htmll);
+                            }
+                        });
+                    },
+                    error: function () {
+                        $(".modal-body").LoadingOverlay("hide");
+                        $("#mensajeErrorCreate").text("ERROR AJAX");
+                        $("#mensajeErrorCreate").show();
+                    },
+                    beforeSend: function () {
+                        $(".modal-body").LoadingOverlay("show", {
+                            imageResizeFactor: 2,
+                            text: "Cargando...",
+                            size: 14
+                        })
+                    }
+                });
+            });
+
+            // EDITAR CATEGORIA
+            $("#ModalCategoryEdit").on("click", '#btnEditar', function () {
+                var Category = {
+                    Id: $("#id-category-edited").val(),
+                    descriptionCategory: $("#nombre-category-edited").val(),
+                    activeCategory: $("#active-category-edited").val() == 1 ? true : false
+                };
+
+                jQuery.ajax({
+                    url: '@Url.Action("UpdateCategory", "Maintainer")',
+                    type: "POST",
+                    data: JSON.stringify({ category: Category }),
+                    datatype: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $(".modal-body").LoadingOverlay("hide");
+                        if (data.message != "") { // SI HAY ERRORES Y COINCIDENCIAS
+                            $("#mensajeErrorEditar").text(data.message);
+                            $("#mensajeErrorEditar").show();
+                        }
+                        if (data.message == "") { // SI NO HAY ERRORES O COINCIDENCIAS
+                            swal("EDITADO CORRECTAMENTE!", "Updated Information", "success")
+                            $("#id-category-edited").val("");
+                            $("#nombre-category-edited").val("");
+                            $("#active-category-edited").val(1);
+                            $("#ModalCategoryEdit").modal("hide");
+                        }
+
+                        jQuery.ajax({
+                            url: '@Url.Action("ListCategories", "Maintainer")',
+                            type: "GET",
+                            datatype: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                console.log(data);
+                                var htmll = '';
+                                for (var i = 0; i < data.length; i++) {
+                                    if (data[i].activeCategory) {
+                                        htmll += '<tr>' +
+                                            '<td id="colID"> ' + data[i].Id + '</td>' +
+                                            '<td id="colName"> ' + data[i].descriptionCategory + '</td>' +
+                                            '<td id="colActive">' + '<span id="span-sign" class="badge bg-primary">' + 'Si' + '</span>' + '</td>' +
+                                            '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                            '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                            '</tr>'
+                                    }
+                                    else {
+                                        htmll += '<tr>' +
+                                            '<td id="colID"> ' + data[i].Id + '</td>' +
+                                            '<td id="colName">' + data[i].descriptionCategory + '</td>' +
+                                            '<td id="colActive"> ' + '<span id="span-sign" class="badge bg-danger">' + 'No' + '</span>' + '</td>' +
+                                            '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                            '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                            '</tr>'
+                                    }
+                                }
+                                $("#tableee").html(htmll);
+                            }
+                        });
+                    },
+                    error: function () {
+                        $(".modal-body").LoadingOverlay("hide");
+                        $("#mensajeErrorEditar").text("ERROR AJAX");
+                        $("#mensajeErrorEditar").show();
+                    },
+                    beforeSend: function () {
+                        $(".modal-body").LoadingOverlay("show", {
+                            imageResizeFactor: 2,
+                            text: "Cargando...",
+                            size:14
+                        })
+                    }
+                });
+            });
+
+            // ELIMINAR CATEGORIA
+            $("#ModalCategoryDelete").on("click", '#btnDelete', function () {
+                $("#ModalCategoryDelete").modal("hide")
+                swal({
+                    title: "Are you sure?",
+                    text: "You will delete this category",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, Cancel",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            var Id = $("#id-category-deleted").val();
+                            jQuery.ajax({
+                                url: '@Url.Action("DeleteCategory", "Maintainer")',
+                                type: "POST",
+                                data: JSON.stringify({ ID: Id }),
+                                datatype: "json",
+                                contentType: "application/json; charset=utf-8",
+                                success: function () {
+                                    jQuery.ajax({
+                                        url: '@Url.Action("ListCategories", "Maintainer")',
+                                        type: "GET",
+                                        datatype: "json",
+                                        contentType: "application/json; charset=utf-8",
+                                        success: function (data) {
+                                            console.log(data);
+                                            var htmll = '';
+                                            for (var i = 0; i < data.length; i++) {
+                                                if (data[i].activeCategory) {
+                                                    htmll += '<tr>' +
+                                                        '<td id="colID"> ' + data[i].Id + '</td>' +
+                                                        '<td id="colName"> ' + data[i].descriptionCategory + '</td>' +
+                                                        '<td id="colActive">' + '<span id="span-sign" class="badge bg-primary">' + 'Si' + '</span>' + '</td>' +
+                                                        '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                                        '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                                        '</tr>'
+                                                }
+                                                else {
+                                                    htmll += '<tr>' +
+                                                        '<td id="colID"> ' + data[i].Id + '</td>' +
+                                                        '<td id="colName">' + data[i].descriptionCategory + '</td>' +
+                                                        '<td id="colActive"> ' + '<span id="span-sign" class="badge bg-danger">' + 'No' + '</span>' + '</td>' +
+                                                        '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                                        '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                                        '</tr>'
+                                                }
+                                            }
+                                            $("#tableee").html(htmll);
+                                        }
+                                    });
+
+                                    swal("Deleted!", "The category has been deleted.", "success");
+                                    $.LoadingOverlay("hide");
+                                    $("#ModalCategoryDelete").modal("hide")
+                                },
+                                error: function () {
+                                    alert("ERROR")
+                                    $.LoadingOverlay("hide");
+                                    $("#ModalCategoryDelete").modal("hide")
+                                },
+                                beforeSend: function () {
+                                    $.LoadingOverlay("show");
+                                }
+                            })
+                        } else {
+                            swal("Cancelled", "The operation was cancelled :)", "error");
+                        }
+                    });
+            })
+        });
+    </script>
+
+}
+

@@ -1,0 +1,586 @@
+﻿@{
+    ViewBag.Title = "Admins";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/Content/AdminsHomeEdition.css" />
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="index.html">Resumen</a></li>
+    <li class="breadcrumb-item active">Administradores</li>
+</ol>
+
+
+<div class="card">
+
+    <div class="card-header">
+        <i class="fas fa-users me-1"></i>Lista de Administradores
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <button type="button" id="btn-agregar"class="btn btn-info" @*data-bs-toggle="modal"*@ onclick="abrirModaal()" @*data-bs-target="#ModalAdmin"*@>Crear Nuevo Usuario</button>
+            </div>
+        </div>
+        <hr />
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <form id="search" class="form-inline my-2 my-lg-0">
+                    <input id="search-text" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+
+
+        <table id="table" class="table table-dark table-bordered table-hover" style="width: 100%">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Correo</th>
+                    <th>Activo</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody id="tableee">
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalAdminCreate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-black text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar nuevo Admin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form>
+
+                    <div class="row">
+                        <div class="col sm-6">
+                            <label>Ingrese Nombre:</label>
+                            <input type="text" id="nombre-admin-created" placeholder="Nombre..." autocomplete="off" />
+                        </div>
+                        <div class="col sm-6">
+                            <label>Ingrese Apellido:</label>
+                            <input type="text" id="apellido-admin-created" placeholder="Apellido..." autocomplete="off" required />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col sm-6">
+                            <label>Ingrese email:</label>
+                            <input type="text" id="email-admin-created" placeholder="email..." autocomplete="off" required />
+                        </div>
+                        <div class="col sm-6">
+                            <label>Activo:</label>
+                            <select id="active-admin-created" class="form-select">
+                                <option value="1">Sí</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div id="mensajeErrorCreate" class="alert alert-danger" role="alert">
+                                
+                            </div>
+                        </div>
+                    </div>
+                            @*<div class="row" id="last-row-form-admin">
+                    <div class="col sm-6">
+                        <label>Ingrese contraseña:</label>
+                        <input type="password" id="contraseña-admin" pattern="[a-z0-5]{8,}" required />
+                    </div>
+                </div>*@
+                            <div class="modal-footer">
+                                <button type="button" id="btnCancelarCreate" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
+                                <button type="button" id="btnCreate" class="btn btn-primary">AGREGAR</button>
+                            </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="ModalAdminEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-black text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Cuenta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form>
+                    <div class="row">
+                        <div class="col sm-6">
+                            <label>ID:</label>
+                            <input  id="id-admin-edited"type="text" autocomplete="off" readonly/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col sm-6">
+                            <label>Ingrese Nombre:</label>
+                            <input type="text" id="nombre-admin-edited" placeholder="Nombre..." autocomplete="off" required />
+                        </div>
+                        <div class="col sm-6">
+                            <label>Ingrese Apellido:</label>
+                            <input type="text" id="apellido-admin-edited" placeholder="Apellido..." autocomplete="off" required />
+                        </div>
+                    </div>
+                     
+                    <div class="row">
+                        <div class="col sm-6">
+                            <label>Ingrese email:</label>
+                            <input type="text" id="email-admin-edited" placeholder="email..." autocomplete="off" required />
+                        </div>
+                        <div class="col sm-6">
+                            <label>Activo:</label>
+                            <select id="active-admin-edited" class="form-select">
+                                <option value="1">Sí</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    @*<div class="row" id="last-row-form-admin">
+                            <div class="col sm-6">
+                                <label>Ingrese contraseña:</label>
+                                <input type="password" id="contraseña-admin" pattern="[a-z0-5]{8,}" required />
+                            </div>
+                        </div>*@
+
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div id="mensajeErrorEditar" class="alert alert-danger" role="alert">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnCancelarEdit" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
+                        <button type="button" id="btnEditar" class="btn btn-primary">EDIT</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="ModalAdminDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-black text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>ID DE LA CUENTA AFECTADA:</label>
+                            <input type="text" id="id-admin-deleted" autocomplete="off" readonly/>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" id="btnDelete" class="btn btn-primary">ACCEPT</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            jQuery.ajax({
+                url: '@Url.Action("ListAdmins","Home")',
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    console.log(data);
+                    var htmll = '';
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].activeAdminAccount) {
+                            htmll += '<tr>' +
+                                '<td id="colID"> ' + data[i].Id + '</td>' +
+                                '<td id="colName"> ' + data[i].nameAdmin + '</td>' +
+                                '<td id="colLastName">' + data[i].lastNameAdmin + '</td>' +
+                                '<td id="colEmail">' + data[i].emailAdmin + '</td>' +
+                                '<td id="colActive">' + '<span id="span-sign" class="badge bg-primary">' + 'Si' + '</span>' + '</td>' +
+                                '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                '</tr>'
+                        }
+                        else {
+                            htmll += '<tr>' +
+                                '<td id="colID"> ' + data[i].Id + '</td>' +
+                                '<td id="colName">' + data[i].nameAdmin + '</td>' +
+                                '<td id="colLastName">' + data[i].lastNameAdmin + '</td>' +
+                                '<td id="colEmail">' + data[i].emailAdmin + '</td>' +
+                                '<td id="colActive"> ' + '<span id="span-sign" class="badge bg-danger">' + 'No' + '</span>' + '</td>' +
+                                '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                '</tr>'
+                        }
+                    }
+                    $("#tableee").html(htmll);
+                }
+            });
+
+
+            // MOSTRAR MODAL DE CREAR
+            $(".card-body").on("click", '#btn-agregar', function () {
+                $("#mensajeErrorCreate").hide();
+                $("#ModalAdminCreate").modal("show")
+            });
+
+            // MOSTRAR MODAL DE EDITAR
+            $("table tbody").on("click", '#btn-editar', function () {
+                var stringData = "";
+                var valueAuxActive = ""; // Cadena
+                var valueActive = true; // Booleano
+
+
+                $("#mensajeErrorEditar").hide();
+                $(this).parents("tr").find("#colID").each(function () {
+                    stringData = $(this).html();
+                })
+                $("#id-admin-edited").val(stringData);
+                $(this).parents("tr").find("#colName").each(function () {
+                    stringData = $(this).html();
+                })
+                $("#nombre-admin-edited").val(stringData);
+                $(this).parents("tr").find("#colLastName").each(function () {
+                    stringData = $(this).html();
+                })
+                $("#apellido-admin-edited").val(stringData);
+                $(this).parents("tr").find("#colEmail").each(function () {
+                    stringData = $(this).html();
+                })
+                $("#email-admin-edited").val(stringData);
+                $(this).parents("tr").find("#colActive").each(function () {
+                    valueAuxActive = $(this).html();
+                })
+                if (valueAuxActive == '<span id="span-sign" class="badge bg-primary">Si</span>') {
+                    valueActive = true;
+                }
+                else {
+                    valueActive = false;
+                }
+
+                $("#active-admin-edited").val(valueActive == true ? 1 : 0);
+
+                $("#ModalAdminEdit").modal("show")
+            });
+
+            // MOSTRAR MODAL DE ELIMINAR
+            $("table tbody").on("click", '#btn-eliminar', function () {
+                var stringData = "";
+                $(this).parents("tr").find("#colID").each(function () {
+                    stringData = $(this).html();
+                })
+                $("#id-admin-deleted").val(stringData);
+                $("#ModalAdminDelete").modal("show")
+            });
+
+            // CERRAR MODAL DE CREAR
+            $("#ModalAdminCreate").on("click", '#btnCancelarCreate', function () {
+                $("#nombre-admin-created").val("");
+                $("#apellido-admin-created").val("");
+                $("#email-admin-created").val("");
+                $("#active-admin-created").val(1);
+                $(this).modal("hide")
+            });
+
+            // CERRAR MODAL DE EDITAR
+            $("#ModalAdminEdit").on("click", '#btnCancelarEdit', function () {
+                $("#id-admin-edited").val("");
+                $("#nombre-admin-edited").val("");
+                $("#apellido-admin-edited").val("");
+                $("#email-admin-edited").val("");
+                $("#active-admin-edited").val(1);
+                $(this).modal("hide")
+            });
+
+            // CERRAR MODAL DE ELIMINAR
+            $("#ModalAdminDelete").on("click", '#btnCancelarDeleted', function () {
+                alert("ihalwd")
+                $("#id-admin-deleted").val("");
+                $(this).modal("hide")
+            });
+
+            // AGREGAR ADMINISTRADOR
+            $("#ModalAdminCreate").on("click", '#btnCreate', function () {
+                var Admin = {
+                    nameAdmin: $("#nombre-admin-created").val(),
+                    lastNameAdmin: $("#apellido-admin-created").val(),
+                    emailAdmin: $("#email-admin-created").val(),
+                    activeAdminAccount: $("#active-admin-created").val() == 1 ? true : false
+                };
+
+                jQuery.ajax({
+                    url: '@Url.Action("CreateAdmin", "Home")',
+                    type: "POST",
+                    data: JSON.stringify({ admin: Admin }),
+                    datatype: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $(".modal-body").LoadingOverlay("hide");
+
+                        if (data.message != "") { // SI HAY ERRORES Y COINCIDENCIAS
+                            $("#mensajeErrorCreate").text(data.message);
+                            $("#mensajeErrorCreate").show();
+                        }
+                        if (data.message == "") { // SI NO HAY ERRORES O COINCIDENCIAS
+                            swal("AGREGADO CORRECTAMENTE!", "Check the email", "success")
+                            $("#nombre-admin-created").val("");
+                            $("#apellido-admin-created").val("");
+                            $("#email-admin-created").val("");
+                            $("#active-admin-created").val(1);
+                            $("#ModalAdminCreate").modal("hide")
+                        }
+
+                        jQuery.ajax({
+                            url: '@Url.Action("ListAdmins","Home")',
+                            type: "GET",
+                            datatype: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                console.log(data);
+                                var htmll = '';
+                                for (var i = 0; i < data.length; i++) {
+                                    if (data[i].activeAdminAccount) {
+                                        htmll += '<tr>' +
+                                            '<td id="colID"> ' + data[i].Id + '</td>' +
+                                            '<td id="colName"> ' + data[i].nameAdmin + '</td>' +
+                                            '<td id="colLastName">' + data[i].lastNameAdmin + '</td>' +
+                                            '<td id="colEmail">' + data[i].emailAdmin + '</td>' +
+                                            '<td id="colActive">' + '<span id="span-sign" class="badge bg-primary">' + 'Si' + '</span>' + '</td>' +
+                                            '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                            '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                            '</tr>'
+                                    }
+                                    else {
+                                        htmll += '<tr>' +
+                                            '<td id="colID"> ' + data[i].Id + '</td>' +
+                                            '<td id="colName">' + data[i].nameAdmin + '</td>' +
+                                            '<td id="colLastName">' + data[i].lastNameAdmin + '</td>' +
+                                            '<td id="colEmail">' + data[i].emailAdmin + '</td>' +
+                                            '<td id="colActive"> ' + '<span id="span-sign" class="badge bg-danger">' + 'No' + '</span>' + '</td>' +
+                                            '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                            '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                            '</tr>'
+                                    }
+                                }
+                                $("#tableee").html(htmll);
+                            }
+                        });
+                    },
+                    error: function () {
+                        $(".modal-body").LoadingOverlay("hide");
+                        $("#mensajeErrorCreate").text("ERROR AJAX");
+                        $("#mensajeErrorCreate").show();
+                    },
+                    beforeSend: function () {
+                        $(".modal-body").LoadingOverlay("show", {
+                            imageResizeFactor: 2,
+                            text: "Cargando...",
+                            size: 14
+                        })
+                    }
+                });
+            });
+
+            // EDITAR ADMINISTRADOR
+            $("#ModalAdminEdit").on("click", '#btnEditar', function () {
+                var Adminn = {
+                    Id: $("#id-admin-edited").val(),
+                    nameAdmin: $("#nombre-admin-edited").val(),
+                    lastNameAdmin: $("#apellido-admin-edited").val(),
+                    emailAdmin: $("#email-admin-edited").val(),
+                    activeAdminAccount: $("#active-admin-edited").val() == 1 ? true : false
+                };
+
+                jQuery.ajax({
+                    url: '@Url.Action("UpdateAdmin", "Home")',
+                    type: "POST",
+                    data: JSON.stringify({ admin: Adminn }),
+                    datatype: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $(".modal-body").LoadingOverlay("hide");
+                        if (data.message != "") { // SI HAY ERRORES Y COINCIDENCIAS
+                            $("#mensajeErrorEditar").text(data.message);
+                            $("#mensajeErrorEditar").show();
+                        }
+                        if (data.message == "") { // SI NO HAY ERRORES O COINCIDENCIAS
+                            swal("EDITADO CORRECTAMENTE!", "Updated Information", "success")
+                            $("#id-admin-edited").val("");
+                            $("#nombre-admin-edited").val("");
+                            $("#apellido-admin-edited").val("");
+                            $("#email-admin-edited").val("");
+                            $("#active-admin-edited").val(1);
+                            $("#ModalAdminEdit").modal("hide");
+                        }
+
+                        jQuery.ajax({
+                            url: '@Url.Action("ListAdmins","Home")',
+                            type: "GET",
+                            datatype: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                console.log(data);
+                                var htmll = '';
+                                for (var i = 0; i < data.length; i++) {
+                                    if (data[i].activeAdminAccount) {
+                                        htmll += '<tr>' +
+                                            '<td id="colID"> ' + data[i].Id + '</td>' +
+                                            '<td id="colName"> ' + data[i].nameAdmin + '</td>' +
+                                            '<td id="colLastName">' + data[i].lastNameAdmin + '</td>' +
+                                            '<td id="colEmail">' + data[i].emailAdmin + '</td>' +
+                                            '<td id="colActive">' + '<span id="span-sign" class="badge bg-primary">' + 'Si' + '</span>' + '</td>' +
+                                            '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                            '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                            '</tr>'
+                                    }
+                                    else {
+                                        htmll += '<tr>' +
+                                            '<td id="colID"> ' + data[i].Id + '</td>' +
+                                            '<td id="colName">' + data[i].nameAdmin + '</td>' +
+                                            '<td id="colLastName">' + data[i].lastNameAdmin + '</td>' +
+                                            '<td id="colEmail">' + data[i].emailAdmin + '</td>' +
+                                            '<td id="colActive"> ' + '<span id="span-sign" class="badge bg-danger">' + 'No' + '</span>' + '</td>' +
+                                            '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                            '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                            '</tr>'
+                                    }
+                                }
+                                $("#tableee").html(htmll);
+                            }
+                        });
+                    },
+                    error: function () {
+                        $(".modal-body").LoadingOverlay("hide");
+                        $("#mensajeErrorEditar").text("ERROR AJAX");
+                        $("#mensajeErrorEditar").show();
+                    },
+                    beforeSend: function () {
+                        $(".modal-body").LoadingOverlay("show", {
+                            imageResizeFactor: 2,
+                            text: "Cargando...",
+                            size: 14
+                        })
+                    }
+                });
+            });
+
+            // ELIMINAR ADMINISTRADOR
+            $("#ModalAdminDelete").on("click", '#btnDelete', function () {
+                $("#ModalAdminDelete").modal("hide")
+                swal({
+                    title: "Are you sure?",
+                    text: "You will delete this account",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, Cancel",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            var Id = $("#id-admin-deleted").val();
+                            jQuery.ajax({
+                                url: '@Url.Action("DeleteAdmin", "Home")',
+                                type: "POST",
+                                data: JSON.stringify({ ID: Id }),
+                                datatype: "json",
+                                contentType: "application/json; charset=utf-8",
+                                success: function () {
+                                    jQuery.ajax({
+                                        url: '@Url.Action("ListAdmins","Home")',
+                                        type: "GET",
+                                        datatype: "json",
+                                        contentType: "application/json; charset=utf-8",
+                                        success: function (data) {
+                                            console.log(data);
+                                            var htmll = '';
+                                            for (var i = 0; i < data.length; i++) {
+                                                if (data[i].activeAdminAccount) {
+                                                    htmll += '<tr>' +
+                                                        '<td id="colID"> ' + data[i].Id + '</td>' +
+                                                        '<td id="colName"> ' + data[i].nameAdmin + '</td>' +
+                                                        '<td id="colLastName">' + data[i].lastNameAdmin + '</td>' +
+                                                        '<td id="colEmail">' + data[i].emailAdmin + '</td>' +
+                                                        '<td id="colActive">' + '<span id="span-sign" class="badge bg-primary">' + 'Si' + '</span>' + '</td>' +
+                                                        '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                                        '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                                        '</tr>'
+                                                }
+                                                else {
+                                                    htmll += '<tr>' +
+                                                        '<td id="colID"> ' + data[i].Id + '</td>' +
+                                                        '<td id="colName">' + data[i].nameAdmin + '</td>' +
+                                                        '<td id="colLastName">' + data[i].lastNameAdmin + '</td>' +
+                                                        '<td id="colEmail">' + data[i].emailAdmin + '</td>' +
+                                                        '<td id="colActive"> ' + '<span id="span-sign" class="badge bg-danger">' + 'No' + '</span>' + '</td>' +
+                                                        '<td>' + '<button type="button" id="btn-editar" class="fas fa-pen btn-editar">' + '</button>' +
+                                                        '<td>' + '<button type="button" class="fas fa-trash btn-eliminar" id="btn-eliminar">' + '</button>' +
+                                                        '</tr>'
+                                                }
+                                            }
+                                            $("#tableee").html(htmll);
+                                        }
+                                    });
+                                    swal("Deleted!", "The account has been deleted.", "success");
+                                    $.LoadingOverlay("hide");
+                                    $("#ModalAdminDelete").modal("hide")
+                                },
+                                error: function () {
+                                    alert("ERROR")
+                                    $.LoadingOverlay("hide");
+                                    $("#ModalAdminDelete").modal("hide")
+                                },
+                                beforeSend: function () {
+                                    $.LoadingOverlay("show");
+                                }
+                            })
+                        } else {
+                            swal("Cancelled", "The operation was cancelled :)", "error");
+                        }
+                    });
+            });
+        });
+    </script>
+
+}
+
+

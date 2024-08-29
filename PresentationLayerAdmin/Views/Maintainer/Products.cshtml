@@ -1,0 +1,463 @@
+﻿
+@{
+    ViewBag.Title = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet"/>
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="index.html">Mantenimiento</a></li>
+    <li class="breadcrumb-item active">Productos</li>
+</ol>
+
+
+<div class="card">
+
+    <div class="card-header">
+        <i class="fas fa-boxes me-1"></i>Lista de Productos
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <button type="button" id="btn-agregaar" class="btn btn-info" onclick="showModalInterface(null)">Crear Nuevo Producto</button>
+            </div>
+        </div>
+        <hr />
+
+        @*<nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <form id="search" class="form-inline my-2 my-lg-0">
+                    <input id="search-text" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>*@
+
+
+        <table id="table" @*class="table table-dark table-bordered table-hover"*@ class ="display cell-border"style="width: 100%">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Categoria</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Activo</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody id="tableee">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalProductCreate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-black text-white">
+                <h5 class="modal-title" id="exampleModalLabel">PRODUCT</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form id="container" class="row">
+
+                    <div class="col-sm-3">
+                        <div class="mb-2">
+                            <img id="imgProduct" height="200" width="230" class="border rounded mx-auto d-block img-fluid" />
+                        </div>
+                        <div class="mb-2">
+                            <input class="form-control" type="file" id="fileProduct" accept="image/png,image/jpg,image/jpeg" onchange="showImageResult(this)" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="mb-2">
+                            <label>ID</label>
+                            <input id="idProduct" class="form-control" readonly />
+                        </div>
+                        <div class="mb-3">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control" id="txtName" name="nameProduct" autocomplete="off" placeholder="Nombre del producto" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Descripcion</label>
+                            <textarea type="text" class="form-control" name="descripcion" id="txtDescripcion" autocomplete="off" style="height:120px;resize:none" placeholder="Descripción del producto..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="mb-3">
+                            <label>Categoría</label>
+                            <select id="cboCategory" name="categoria" class="form-select"></select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Precio</label>
+                            <input type="text" class="form-control" name="precio" autocomplete="off" id="txtPrice" placeholder="Ejemplo: 12.99" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="mb-3">
+                            <label>Stock</label>
+                            <input type="text" class="form-control" name="stock" autocomplete="off" id="txtStock" placeholder="Numero entero..." />
+                        </div>
+                        <div class="mb-3">
+                            <label>Activo</label>
+                            <select id="active-product-created" class="form-select">
+                                <option value="1">Sí</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div id="mensajeErrorCreate" class="alert alert-danger" role="alert">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" id="btnCancelarCreate" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
+                        <button type="button" id="btnCreate" class="btn btn-primary">SAVE</button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript">
+
+        var tableData;
+        var rowSelected;
+
+        function showImageResult(input) {
+
+            if (input.files) {
+                var reader = new FileReader();
+                reader.onload = function (E) {
+                    $("#imgProduct").attr("src", E.target.result).width(230).height(200);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        tableData = $("#table").DataTable({
+            responsive: true,
+            ordering: false,
+            "ajax": {
+                url: '@Url.Action("ListProducts", "Maintainer")',
+                type: "GET",
+                datatype: "json"
+            },
+            "columns": [
+                { "data": "IdProduct" },
+                { "data": "nameProduct" },
+                { "data": "descriptionProduct" },
+                {
+                    "data": "idCategory", "render": function (data) {
+                        return data.descriptionCategory;
+                    }
+                },
+                { "data": "priceProduct" },
+                { "data": "stockProduct" },
+                { 
+                    "data": "activeProduct", "render": function (value) {
+                        if (value) {
+                            return '<span class="badge bg-success d-grid">Si</span>'
+                        } else {
+                            return '<span class="badge bg-danger d-grid">No</span>'
+                        }
+                    }
+                },
+                {
+                    "defaultContent": '<button type="button" id="btn-editar" class= "btn btn-primary btn-sm btn-editar "><i class="fas fa-pen"></i></button>' +
+                        '<button type="button" class= "btn btn-danger btn-sm ms-2" id="btn-eliminar"><i class="fas fa-trash"></i></button>',
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "90px"
+                }
+            ],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json"
+            }
+        });
+
+        function showModalInterface(data) {
+            $("#idProduct").val(0);
+            $("#txtName").val("");
+            $("#txtDescripcion").val("");
+            $("#imgProduct").removeAttr("src");
+            $("#fileProduct").val("");
+            $("#cboCategory").val($("#cboCategory option:first").val());
+            $("#txtPrice").val("");
+            $("#txtStock").val("");
+            $("#active-product-created").val(1);
+            $("#mensajeErrorCreate").hide();
+            if (data != null) {
+                $("#idProduct").val(data.IdProduct);
+                $("#txtName").val(data.nameProduct);
+                $("#txtDescripcion").val(data.descriptionProduct);
+                $("#cboCategory").val(data.idCategory.Id);
+                $("#txtPrice").val(data.priceProduct);
+                $("#txtStock").val(data.stockProduct);
+                $("#active-product-created").val(data.activeProduct == true ? 1 : 0);
+
+                jQuery.ajax({
+                    url: '@Url.Action("UpdateImage", "Maintainer")',
+                    type: "POST",
+                    data: JSON.stringify({ ID: data.IdProduct }),
+                    datatype: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $("#imgProduct").LoadingOverlay("hide");
+                        if (data.Conversion) {
+                            $("#imgProduct").attr({ "src": "data:image/" + data.extension + ";base64," + data.Textbase64 });
+                        }
+                        else {
+
+                        }
+                    },
+                    error: function () {
+                        $("#imgProduct").LoadingOverlay("hide");
+                        $("#mensajeErrorCreate").val("ERROR AJAX");
+                        $("#mensajeErrorCreate").show();
+                    },
+                    beforeSend: function () {
+                        $("#imgProduct").LoadingOverlay("show", {
+                            imageResizeFactor: 2,
+                            text: "Cargando...",
+                            size: 14
+                        })
+                    }
+
+                });
+
+
+
+
+
+            }
+            $("#ModalProductCreate").modal("show");
+        }
+
+        $("#ModalProductCreate").on("click", "#btnCancelarCreate", function () {
+            $("#txtName").val("");
+            $("#txtDescripcion").val("");
+            $("#fileProduct").val();
+            $("#txtPrice").val("");
+            $("#txtStock").val("");
+            $("#active-product-created").val(1);
+        });
+
+        $("#table tbody").on("click", '#btn-editar', function () {
+            rowSelected = $(this).closest("tr");
+            var data = tableData.row(rowSelected).data();
+            showModalInterface(data);
+        });
+
+        jQuery.ajax({
+            url: '@Url.Action("ListCategoriesForProducts", "Maintainer")',
+            type: "GET",
+            data: null,
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                console.log(data);
+                $("<option>").attr({ "value": "0", "disabled": "true" }).text("SELECCIONE").appendTo("#cboCategory");
+                $.each(data.data, function (index, valor) {
+                    $("<option>").attr({ "value": valor.Id }).text(valor.descriptionCategory).appendTo("#cboCategory");
+                })
+            },
+            error: function () {
+                alert("ERROR")
+            }
+        });
+
+
+        jQuery.validator.addMethod("decimalprice", function (value, element) {
+            return this.optional(element) || /^\d{0,4}(\.\d{0,2})?$/i.test(value);
+        }, "EL CORRECTO FORMATO DEL PRECIO ES ##.##");
+
+
+        $("#container").validate({
+            rules: {
+                nameProduct: {
+                    required: true
+                },
+                descripcion: {
+                    required: true
+                },
+                precio: {
+                    required: true,
+                    decimalprice: true
+                },
+                stock: {
+                    required: true,
+                    number: true
+                }
+            },
+            messages: {
+                nameProduct: "EL NOMBRE ES OBLIGATORIO",
+                descripcion: "LA DESCRIPCION ES OBLIGATORIA",
+                precio: { required: "EL PRECIO ES OBLIGATORIO", decimalprice: "EL CORRECTO FORMATO DEL PRECIO ES ##.##" },
+                stock: { required: "EL STOCK ES OBLIGATORIO",number:"SOLO INGRESAR NUMEROS" }
+            },
+            errorElement: "div",
+            errorLabelContainer:".alert-danger"
+        });
+
+
+        // CREATE AND EDIT PRODUCT
+
+        $("#ModalProductCreate").on("click", '#btnCreate', function () {
+
+            if (!$("#container").valid()) {
+                return;
+            }
+
+            var Image = $("#fileProduct")[0].files[0];
+
+            var Product = {
+                IdProduct: $("#idProduct").val(),
+                nameProduct:$("#txtName").val(),
+                descriptionProduct :$("#txtDescripcion").val(),
+                idCategory : {
+                    Id : $("#cboCategory option:selected").val(),
+                    descriptionCategory : $("#cboCategory option:selected").text()
+                },
+                priceProduct : $("#txtPrice").val(),
+                priceProductText : $("#txtPrice").val(),
+                stockProduct : $("#txtStock").val(),
+                activeProduct : $("#active-product-created").val() == 1 ? true : false
+            }
+
+            var request = new FormData();
+            request.append("product", JSON.stringify(Product));
+            request.append("fileImage", Image);
+
+            jQuery.ajax({
+                url: '@Url.Action("CreateProduct", "Maintainer")',
+                type: "POST",
+                data: request,
+                processData:false,
+                contentType: false,
+                success: function (data) {
+                    $(".modal-body").LoadingOverlay("hide");
+                    if (Product.IdProduct == 0) {
+
+                        if (data.IdGenerated != 0) {
+                            Product.IdProduct = data.IdGenerated;
+                            tableData.row.add(Product).draw(false);
+                            $("#ModalProductCreate").modal("hide");
+                            swal("AGREGADO CORRECTAMENTE!", "SUCCESS", "success")
+                        } else {
+                            $("#mensajeErrorCreate").text(data.Message);
+                            $("#mensajeErrorCreate").show();
+                        }
+
+                    }
+                    else {
+                        if (data.sucessOperation) {
+                            tableData.row(rowSelected).data(Product).draw(false);
+                            $("#ModalProductCreate").modal("hide");
+                            swal("EDITADO CORRECTAMENTE!", "SUCCESS", "success")
+                        }
+                        else {
+                            $("#mensajeErrorCreate").text(data.Message);
+                            $("#mensajeErrorCreate").show();
+                        }
+                    }
+                },
+                error: function () {
+                    $(".modal-body").LoadingOverlay("hide");
+                    $("#mensajeErrorCreate").val("ERROR AJAX");
+                    $("#mensajeErrorCreate").show();
+                },
+                beforeSend: function () {
+                    $(".modal-body").LoadingOverlay("show", {
+                        imageResizeFactor: 2,
+                        text: "Cargando...",
+                        size: 14
+                    })
+                }
+
+            });
+
+        });
+
+        // DELETE PRODUCT
+
+        $("#table tbody").on("click", '#btn-eliminar', function () {
+            var productSelected = $(this).closest("tr");
+
+            var data = tableData.row(productSelected).data();
+
+            swal({
+                title: "Are you sure?",
+                text: "You will delete this product",
+                type: "warning", 
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+
+                        jQuery.ajax({
+                            url: '@Url.Action("DeleteProduct", "Maintainer")',
+                            type: "POST",
+                            data: JSON.stringify({ ID: data.IdProduct }),
+                            datatype: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                alert("awdawda")
+                                $.LoadingOverlay("hide");
+                                if (data.Answer) {
+                                    tableData.row(productSelected).remove().draw();
+                                    swal("Deleted!", "The product has been deleted.", "success");
+                                }
+                                else {
+                                    swal("There was an error!", data.Message, "error");
+                                }
+
+                            },
+                            error: function () {
+                                alert("error")
+                                $.LoadingOverlay("hide");
+                                swal("There was an error!", "ERROR AJAX", "error");
+                            },
+                            beforeSend: function () {
+                                $.LoadingOverlay("show");
+                            }
+                        });
+
+                    } else {
+                        swal("Cancelled", "The operation was cancelled :)", "error");
+                    }
+
+
+                });
+        });
+
+    </script>
+    }
+

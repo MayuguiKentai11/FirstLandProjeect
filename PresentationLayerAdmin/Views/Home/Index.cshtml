@@ -1,0 +1,347 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/Content/dashBoardStyle.css"/>
+
+<h1 class="mt-4">Dashboard Summary</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item active">Reporte, Inspeccion, Administración y Detalle de Ventas en la Aplicación SuperMarketMaui.</li>
+</ol>
+
+
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <h6>Cantidad de Clientes</h6>
+                        <h6 id="totalClients">0</h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <h6>Cantidad de Ventas</h6>
+                        <h6 id="totalSales">0</h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <i class="fas fa-shopping-cart fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-secondary text-white mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <h6>Cantidad de Productos</h6>
+                        <h6 id="totalProducts">0</h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <i class="fas fa-boxes fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-area me-1"></i>
+                     Grafico de Productos Más Vendidos (4 Últimos Meses)
+                </div>
+                <div class="card-body">
+                <canvas id="myAreaChart" width="100" height="50"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar me-1"></i>
+                    Graficos de Areas de Ventas (4 Últimos Meses)
+                </div>
+                <div class="card-body">
+                <canvas id="myBarChart" width="100" height="50"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Historial de Ventas
+        </div>
+        <div class="card-body">
+            <form method="post" action='@Url.Action("ExportReportSale","Home")'>
+                <div class="row align-items-end">
+
+                    <div class="col-sm-2">
+                        <div class="mb-2">
+                            <label class="form-label">Fecha de Inicio</label>
+                            <input class="form-control" type="text" id="txtStartDay" name="dateStart" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="mb-2">
+                            <label class="form-label">Fecha Final</label>
+                            <input class="form-control" type="text" id="txtFinalDay" name="dateFinal" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="mb-2">
+                            <label class="form-label">ID de Transacción</label>
+                            <input class="form-control" type="text" id="txtIdTransaccion" name="idTransaction" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="d-grid mb-2">
+                            <button class="btn btn-primary" id="btn-buscar" type="button" name="btnBuscar">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="d-grid mb-2">
+                            <button class="btn btn-success" id="btn-exportar" type="submit">
+                                <i class="fas fa-file-excel"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <hr />
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="table" class="display cell-border" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Fecha Venta</th>
+                                <th>Cliente</th>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                                <th>ID Transaccion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    @section scripts{
+        <script type="text/javascript">
+            // VARIABLES PARA DATATABLE
+            var tableData;
+
+            // VARIABLES PARA CHART.JS
+
+            var identificationPieGraphic = document.getElementById("myAreaChart");
+
+            var identificationBar = document.getElementById("myBarChart");
+
+
+            // PRIMERAE MANERA DE HACERLO CON GRAFICOS (USANDO NEW {JSON})
+            jQuery.ajax({
+                url: '@Url.Action("ReportDashboardGraphicsSales", "Business")',
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    console.log(data);
+                    let arrayMonths = [];
+                    let arrayQuantities = [];
+                    for (var i = 0; i < data.Lista.length; i++) {
+                        arrayMonths.push(data.Lista[i].month)
+                        arrayQuantities.push(data.Lista[i].quantity);
+                    }
+
+                    // GRAFICO DE BARRAS
+                    var graphicsBar = new Chart(identificationBar, {
+                        type: 'bar',
+                        data: {
+                            labels: arrayMonths,
+                            datasets: [
+                                {
+                                    label: "Reportes",
+                                    backgroundColor: "#007bff",
+                                    data: arrayQuantities,
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 2
+                                },
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                xAxes: [{
+                                    gridLines: {
+                                        display: true
+                                    }
+                                }],
+                                yAxes: [{
+                                    gridLines: {
+                                        display: true
+                                    },
+                                    ticks: {
+                                        beginAtZero: true,
+                                        suggestedMin: 0 // SUGERIR QUE EMPIECE EN 0 EL VALOR DE Yaxes
+                                    }
+                                }]
+                            }
+                        }
+
+                    });
+                },
+                error: function () {
+                    alert("ERROR AJAX")
+                }
+            });
+
+            // SEGUNDA MANERA DE HACERLO USANDO GRAFICOS (USANDO JSON(OBJECT,ALLOWGET))
+            jQuery.ajax({
+                url: '@Url.Action("ReportProductGraphics", "Business")',
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    var arrayNames = [];
+                    var arrayQuantities = [];
+
+                    for (var i = 0; i < data.length; i++) {
+                        arrayNames.push(data[i].nameProduct)
+                        arrayQuantities.push(data[i].quantity)
+                    }
+
+                    // GRAFICO CIRCULAR
+
+                    var graphicsPie = new Chart(identificationPieGraphic, {
+                        type: 'pie',
+                        data: {
+                            labels: arrayNames,
+                            datasets: [
+                                {
+                                    data: arrayQuantities,
+                                    backgroundColor: ["#007bff", "#dc3545", "#ffc107", "#28a745"],
+                                }
+                            ]
+                        }
+                    });
+
+                },
+                error: function () {
+                    alert("ERROR AJAX")
+                }
+            });
+
+
+
+            $("#txtStartDay").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
+            $("#txtFinalDay").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
+
+            jQuery.ajax({
+                url: '@Url.Action("SummaryDashboard", "Home")',
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    var object = data.Resultado;
+
+                    $("#totalClients").text(object.TotalClient);
+                    $("#totalSales").text(object.TotalSail);
+                    $("#totalProducts").text(object.TotalProduct);
+                },
+                error: function () {
+                    alert("ERROR AJAX")
+                }
+            });
+
+                var Url = '@Url.Action("listReportSale", "Home")'
+                + "?dateStart=" + $("#txtStartDay").val()
+                + "&dateFinal=" + $("#txtFinalDay").val()
+                + "&idTransaction=" + $("#txtIdTransaccion").val();
+
+            tableData = $("#table").DataTable({
+                responsive: true,
+                ordering: false,
+                "ajax": {
+                    url: Url,
+                    type: "GET",
+                    datatype: "json"
+                },
+                "columns": [
+                    { "data": "dateSale" },
+                    { "data": "client" },
+                    { "data": "nameProduct" },
+                    { "data": "priceProduct" },
+                    { "data": "orderProduct" },
+                    { "data": "totalProduct" },
+                    { "data": "idTransaction" }
+                ],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json"
+                }
+            });
+
+            $("#btn-buscar").on("click", function () {
+                var newUrl = '@Url.Action("listReportSale", "Home")'
+                    + "?dateStart=" + $("#txtStartDay").val()
+                    + "&dateFinal=" + $("#txtFinalDay").val()
+                    + "&idTransaction=" + $("#txtIdTransaccion").val();
+
+                tableData.ajax.url(newUrl).load();
+            });
+
+            // SE PUDO HABER HECHO ASÍ PERO NO FUNCIONA, USA FORMULARIOS PARA EXPORTAR EN EXCEL!!!
+
+            //$("#btn-exportar").on("click", function () {
+            //    jQuery.ajax({
+            //        url: '@*@Url.Action("ExportReportSale", "Home")*@',
+            //        type: "POST",
+            //        data: JSON.stringify({ dateStart: $("#txtStartDay").val(), dateFinal: $("#txtFinalDay").val(), idTransaction: $("#txtIdTransaccion").val() }),
+            //        datatype: "json",
+            //        contentType: "application/json; charset=utf-8",
+            //        success: function () {
+
+            //        },
+            //        error: function () {
+            //            alert("ERROR");
+            //        }
+            //    });
+            //});
+        </script>
+
+
+    }
+
+
+

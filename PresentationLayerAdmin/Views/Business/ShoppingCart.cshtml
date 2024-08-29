@@ -1,0 +1,614 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/ShoppingCartStyles.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    <title>ShoppingCart</title>
+</head>
+<body>
+    <!-- LOGICA DE INICIO DE SESIÓN -->
+    <header id="Home" class="bg-black">
+        <div class="container">
+            <div class="logation" onclick="ReturnLink()">
+                <p style="color: white;font-size: 2em;font-weight: bold;">SuperMarket</p><p style="color: orange;font-size: 2em;font-weight: bold;">Maui</p>
+            </div>
+
+            @{
+                if (Session["Client"] == null)
+                {
+                    <a href="@Url.Action("LogIn","LogIn")" id="btn-start">Acceder</a>
+                }
+                else
+                {
+                    <div class="d-inline-flex m-0">
+                        <a class="btn btn-warning me-3" href="@Url.Action("ShoppingCart", "Business")">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Cart
+                            <span class="badge bg-black text-white ms-1 rounded-pill" id="totalShoppingCartProducts">0</span>
+                        </a>
+
+                        <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0" id="navbar-user">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="@Url.Action("ProfileClient", "Business")"><b>@User.Identity.Name</b></a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("MyHistorialShopping", "Business")">Mis Compras</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("SignOutSystem", "LogIn")">Cerrar Sesión</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            }
+
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div class="container">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <div class="me-2">
+                                    <div class="d-flex justify-content-between">
+                                        <h4 class="ms-2 mt-2">Detalle Carrito</h4>
+                                        <a class="btn btn-success" href="@Url.Action("SuperMarketMaui","Business")"><i class="fas fa-cart-plus"></i> Seguir Comprando</a>
+                                    </div>
+
+                                    <hr class="mt-2 mb-2" />
+
+                                    <div id="ShoppingCart-ProductsIn">
+                                        <div class="card mb-2 card-product">
+                                            <div class="card-body">
+                                                <div class="row">
+
+                                                    <div class="col-sm-2 align-self-center d-flex justify-content-center">
+                                                        <img src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" style="width:100px;height:100px" />
+                                                    </div>
+
+                                                    <div class="col-sm-4 align-self-center">
+                                                        <span class="font-wight-bold d-block">Categoria</span>
+                                                        <span>Nombre del Producto</span>
+                                                    </div>
+
+                                                    <div class="col-sm-2 align-self-center">
+                                                        <span>Precio: S/.250</span>
+                                                    </div>
+
+                                                    <div class="col-sm-2 align-self-center">
+                                                        <div class="d-flex">
+                                                            <button class="btn btn-outline-secondary btn-restProduct rounded-0">
+                                                                <i class="fas fa-minus"></i>
+                                                            </button>
+                                                            <input class="form-control input-quantity p-1 text-center rounded-0" disabled style="width:40px" />
+                                                            <button class="btn btn-outline-secondary btn-sumProduct rounded-0">
+                                                                <i class="fas fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-sm-2 align-self-center">
+                                                        <button class="btn btn-outline-danger btn-delete">
+                                                            <i class="far fa-trash-alt"></i> Delete
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="d-flex justify-content-end">
+                                        <label class="align-self-center"><b>Total: S/.<span id="TotalSumProducts">0.00</span></b></label>
+                                    </div>
+
+
+                                </div>
+
+
+
+
+
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="card">
+                                    <div class="card-body bg-light">
+                                        <h5 class="card-title">DETALLE ENVIO</h5>
+                                        <form>
+                                            <div class="mb-2">
+                                                <label for="cboDeparment" class="form-label">Departamento:</label>
+                                                <select class="form-select form-select-sm" id="cboDeparment"></select>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label for="cboProvinces" class="form-label">Provincia:</label>
+                                                <select class="form-select form-select-sm" id="cboProvinces"></select>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label for="cboDistricts" class="form-label">Distrito:</label>
+                                                <select class="form-select form-select-sm" id="cboDistricts"></select>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label for="ContactText" class="form-label">Nombre:</label>
+                                                <input type="text" class="form-control form-control-sm" id="ContactText" />
+                                            </div>
+                                            <div class="mb-2">
+                                                <label for="AddressText" class="form-label">Dirección:</label>
+                                                <input type="text" class="form-control form-control-sm" id="AddressText" />
+                                            </div>
+                                            <div class="mb-2">
+                                                <label for="TelephoneText" class="form-label">Teléfono:</label>
+                                                <input type="text" class="form-control form-control-sm" id="TelephoneText" />
+                                            </div>
+                                            <div class="d-grid">
+                                                <button class="btn btn-primary" type="button" id="btn-Finish-Sale" onclick="PaymentProcess()">
+                                                    <i class="fab fa-paypal"></i> Finalizar Compra
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    @Scripts.Render("~/bundles/complements")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        jQuery.ajax({
+            url: '@Url.Action("GetListShoppingCartProducts", "Business")',
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (value) {
+                $("#ShoppingCart-ProductsIn").html("");
+
+                $("#ShoppingCart-ProductsIn").LoadingOverlay("hide");
+
+                $.each(value.Data, function (i, item) {
+
+                    $("<div>").addClass("card mb-2 card-product").append(
+
+                        $("<div>").addClass("card-body").append(
+
+                            $("<div>").addClass("row").append(
+                                // 1
+                                $("<div>").addClass("col-sm-2 align-self-center d-flex justify-content-center").append(
+                                    $("<img>").addClass("rounded").attr({ "src": "data:image/" + item.IdProduct.extensionImageProduct + ";base64," + item.IdProduct.base64Image })
+                                        .css({"width":"100px","height":"100px"})
+                                ),
+
+                                // 2
+                                $("<div>").addClass("col-sm-4 align-self-center").append(
+                                    $("<span>").addClass("font-wight-bold d-block").text(item.IdProduct.idCategory.descriptionCategory),
+                                    $("<span>").text(item.IdProduct.nameProduct)
+                                ),
+
+                                // 3
+                                $("<div>").addClass("col-sm-2 align-self-center").append(
+                                    $("<span>").text("Precio: S/." + item.IdProduct.priceProduct.toFixed(2))
+                                ),
+
+                                // 4
+
+                                $("<div>").addClass("col-sm-2 align-self-center").append(
+
+                                    $("<div>").addClass("d-flex").append(
+
+                                        $("<button>").addClass("btn btn-outline-secondary btn-restProduct rounded-0").append(
+                                            $("<i>").addClass("fas fa-minus")
+                                        ),
+
+                                        $("<input>").addClass("form-control input-quantity p-1 text-center rounded-0").attr({ "disabled": "disabled" })
+                                            .css({ "width": "40px" }).data("IdProduct", item.IdProduct).val(item.orderProduct),
+
+                                        $("<button>").addClass("btn btn-outline-secondary btn-sumProduct rounded-0").append(
+                                            $("<i>").addClass("fas fa-plus")
+                                        )
+
+                                    )
+
+                                ),
+
+                                //// 5
+
+                                $("<div>").addClass("col-sm-2 align-self-center").append(
+                                    $("<button>").addClass("btn btn-outline-danger btn-delete").append(
+                                        $("<i>").addClass("fas fa-trash-alt"), " Delete").data("idProduct", item.IdProduct.IdProduct)
+                                )
+
+                            )
+
+                        )
+
+
+                    ).appendTo("#ShoppingCart-ProductsIn")
+                })
+                TotalSumProducts();
+            },
+            error: function () {
+                $("#ShoppingCart-ProductsIn").LoadingOverlay("hide");
+            },
+            beforeSend: function () {
+                $("#ShoppingCart-ProductsIn").LoadingOverlay("show");
+            }
+        });
+
+
+        TotalProductsShoppingCart();
+        ListDepartments();
+
+    });
+
+    function ReturnLink() {
+        window.location.href = '@Url.Action("SUperMarketMaui","Business")';
+    }
+
+    function PaymentProcess() {
+
+        if (parseInt($("#totalShoppingCartProducts").text()) == 0) {
+            swal("AVISO", "No hay productos en el carrito", "info");
+            return;
+        }
+
+        if ($("#cboDistricts").val() == null || $("#ContactText").val() == "" || $("#AddressText").val() == ""
+            || $("#TelephoneText").val() == "") {
+            swal("ADVERTENCIA", "Rellene todos los campos obligatorios", "warning");
+            return;
+        }
+
+        var ObjSale = {
+            totalProductCost: $("input.input-quantity").length,
+            totalSaleCost: 0,
+            contactSale: $("#ContactText").val(),
+            IdDistrict: $("#cboDistricts").val(),
+            telephoneClient: $("#TelephoneText").val(),
+            addressClient: $("#AddressText").val()
+        };
+
+        var listShoppingCart = [];
+        // SIEMPRE CUANDO ESTES CREANDO UN OBJETO HACIENDO REFERENCIA A UNA CLASE CREADA DENTRO DEL PROYECTO, PROCURA PONER EL MISMO NOMBRE 
+        // DE SUS ATRIBUTOS PORQUE SINO PUEDEN HABER ERRORES.
+        $("input.input-quantity").each(function (i) {
+
+            var product = $(this).data("IdProduct");
+
+            var OrderProduct = parseInt($(this).val());
+
+            listShoppingCart.push({
+                IdProduct: product,
+                orderProduct: OrderProduct
+            });
+        })
+
+        jQuery.ajax({
+            url: '@Url.Action("FinishProcessBusinessSale", "Business")',
+            type: "POST",
+            data: JSON.stringify({ shoppingCarts: listShoppingCart, objSale: ObjSale }),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+
+                $.LoadingOverlay("hide");
+
+                if (data.Status) {
+                    window.location.href = data.Link;
+                }
+                else {
+                    swal("AVISO", "Vuelva intentarlo mas tarde", "warning");
+                }
+            },
+            error: function () {
+                $.LoadingOverlay("hide");
+            },
+            beforeSend: function () {
+                $.LoadingOverlay("show");
+            }
+        });
+        
+    }
+
+    $(document).on("click", ".btn-sumProduct", function () {
+        var containerReference = $(this).parent("div.d-flex");
+
+        var quantityProduct = $(containerReference).find("input.input-quantity");
+
+        var btnAction = $(this);
+
+        var idProductAux = $(quantityProduct).data("IdProduct").IdProduct;
+
+        jQuery.ajax({
+            url: '@Url.Action("SumOrderShoppingCartProducts", "Business")',
+            type: "POST",
+            data: JSON.stringify({ idProduct: idProductAux, operation: true }),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                $(btnAction).LoadingOverlay("hide");
+
+                if (data.Answer) {
+                    var newOrderProduct = parseInt($(quantityProduct).val()) + 1;
+                    $(quantityProduct).val(newOrderProduct);
+
+                    TotalSumProducts();
+                } else {
+                    swal("NO SE PUDO AGREGAR", data.Message, "error");
+                }
+            },
+            error: function (data) {
+                $(btnAction).LoadingOverlay("hide");
+
+                $(quantityProduct).val(0);
+
+                swal("ERROR AJAX", data.Message, "error");
+
+            },
+            beforeSend: function () {
+                $(btnAction).LoadingOverlay("show");
+            }
+
+        });
+    });
+
+    $(document).on("click", ".btn-restProduct", function () {
+
+        var containerReference = $(this).parents("div.d-flex");
+
+        var quantityProduct = $(containerReference).find("input.input-quantity");
+
+        var btnAction = $(this);
+
+        var idProductAux = $(quantityProduct).data("IdProduct").IdProduct;
+
+        var orderProductRest = parseInt($(quantityProduct).val()) - 1;
+
+        if (orderProductRest >= 1) {
+
+            jQuery.ajax({
+            url: '@Url.Action("SumOrderShoppingCartProducts", "Business")',
+            type: "POST",
+            data: JSON.stringify({ idProduct: idProductAux, operation: false }),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                $(btnAction).LoadingOverlay("hide");
+
+                if (data.Answer) {
+                    // EL PARSEINT CONVIERTE EL STRING EN UN NUMERO
+                    // APRENDER A USARLO PORQUE PUEDE TRAER ERRORES CON UN USO INADECUADO
+
+                    var newOrderProduct = parseInt($(quantityProduct).val()) - 1;
+
+                    $(quantityProduct).val(newOrderProduct);
+
+                    TotalSumProducts();
+                } else {
+                    swal("NO SE PUDO AGREGAR", data.Message, "error");
+                }
+            },
+            error: function (data) {
+                $(btnAction).LoadingOverlay("hide");
+
+                $(quantityProduct).val(0);
+
+                swal("ERROR AJAX", data.Message, "error");
+
+            },
+            beforeSend: function () {
+                $(btnAction).LoadingOverlay("show");
+            }
+
+            });
+
+        }
+
+    });
+
+    $(document).on("click", ".btn-delete", function () {
+
+        var idProductAux = $(this).data("idProduct");
+
+        var cardContainer = $(this).parents("div.card-product");
+
+        jQuery.ajax({
+            url: '@Url.Action("DeleteShoppingCartProducts", "Business")',
+            type: "POST",
+            data: JSON.stringify({ idProduct: parseInt(idProductAux) }),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                $(cardContainer).LoadingOverlay("hide");
+                // SIEMPRE TEN CUIDADO DE PONER PARAMETROS DE TIPO OUT MESSAGE PORQUE PUEDE OCASIONAR ERRORES 
+                // A LA HORA DE LLAMAR EL AJAX
+                if (data.Result) {
+                    cardContainer.remove();
+
+                    TotalProductsShoppingCart();
+
+                    TotalSumProducts();
+                    swal("ELIMINADO CORRECTAMENTE", "", "success");
+
+                } else {
+                    swal("INFO", data.Message, "information");
+                }
+            },
+            error: function (data) {
+                $(cardContainer).LoadingOverlay("hide");
+
+                swal("ERROR AJAX", data.Message, "error");
+            },
+            beforeSend: function () {
+                $(cardContainer).LoadingOverlay("show");
+            }
+        })
+
+    })
+    
+
+
+    function TotalSumProducts() {
+        var sumTotal = parseFloat(0);
+
+        $("input.input-quantity").each(function (i) {
+            var price = $(this).data("IdProduct").priceProduct;
+            var quantity = parseFloat($(this).val())
+
+            var oneShot = price * quantity;
+
+            sumTotal += oneShot;
+        })
+
+        $("#TotalSumProducts").text(sumTotal.toFixed(2))
+
+        $("#TotalSumProducts").data("sumTotal", sumTotal);
+    }
+
+
+    function TotalProductsShoppingCart() {
+        if ($("#totalShoppingCartProducts").length > 0) {
+            jQuery.ajax({
+                url: '@Url.Action("GetTotalShoppingCartProducts", "Business")',
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $("#totalShoppingCartProducts").text(data.Result);
+                },
+                error: function () {
+                    $("#totalShoppingCartProducts").text(0);
+                }
+            });
+        }
+    }
+
+    function ListDepartments() {
+
+        $("<option>").attr({ "value": "00" ,"disabled":"disabled","selected":"true"}).text("SELECCIONE").appendTo("#cboDeparment")
+
+        jQuery.ajax({
+            url: '@Url.Action("ListDepartments", "Business")',
+            type: "POST",
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                console.log(data.Departments)
+
+                if (data.Departments != null) {
+
+                    $.each(data.Departments, function (i, item) {
+
+                        $("<option>").attr({ "value": item.Id }).text(item.description).appendTo("#cboDeparment")
+
+                    })
+
+
+                }
+                ListProvinces();
+            },
+            error: function () {
+                $("<option>").attr({ "value": "00", "disabled": "disabled", "selected": "true" }).text("ERROR").appendTo("#cboDeparment")
+            }
+        });
+    }
+
+    $("#cboDeparment").on("change", function () {
+        ListProvinces();
+    })
+
+    function ListProvinces() {
+
+        $("#cboProvinces").html("")
+
+        $("<option>").attr({ "value": "00", "disabled": "disabled", "selected": "true" }).text("SELECCIONE").appendTo("#cboProvinces")
+
+        jQuery.ajax({
+            url: '@Url.Action("ListProvinces", "Business")',
+            type: "POST",
+            data: JSON.stringify({ idDepartment: $("#cboDeparment option:selected").val() }),
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                if (data.Provinces != null) {
+
+                    $.each(data.Provinces, function (i, item) {
+
+                        $("<option>").attr({ "value": item.Id }).text(item.description).appendTo("#cboProvinces")
+
+                    })
+
+
+                }
+                ListDistricts();
+            },
+            error: function () {
+                $("<option>").attr({ "value": "00", "disabled": "disabled", "selected": "true" }).text("ERROR").appendTo("#cboProvinces")
+            }
+        });
+    }
+
+    $("#cboProvinces").on("change", function () {
+        ListDistricts();
+    });
+
+    function ListDistricts() {
+
+        $("#cboDistricts").html("")
+
+        $("<option>").attr({ "value": "00", "disabled": "disabled", "selected": "true" }).text("SELECCIONE").appendTo("#cboDistricts")
+
+        jQuery.ajax({
+            url: '@Url.Action("ListDistricts", "Business")',
+            type: "POST",
+            data: JSON.stringify({ idDepartment: $("#cboDeparment option:selected").val(), idProvince: $("#cboProvinces option:selected").val() }),
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                if (data.Districts != null) {
+
+                    $.each(data.Districts, function (i, item) {
+
+                        $("<option>").attr({ "value": item.Id }).text(item.description).appendTo("#cboDistricts")
+
+                    })
+
+                }
+            },
+            error: function () {
+                $("<option>").attr({ "value": "00", "disabled": "disabled", "selected": "true" }).text("ERROR").appendTo("#cboDistricts")
+            }
+        });
+    }
+</script>

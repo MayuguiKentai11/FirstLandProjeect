@@ -1,0 +1,154 @@
+﻿
+@{
+    ViewBag.Title = "ProfileUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <link href="~/Content/ProfileUserStyle.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile User</title>
+</head>
+    
+<body>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="row">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 offset-md-4">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+                                Datos Usuario
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="myTabContent">
+                        <br />
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div class="row">
+
+                                <div class="col-4">
+                                    <img src="~/Content/images/login-icon.png" alt="Foto_Login_Icon" class="img-thumbnail" />
+                                </div>
+
+                                <div class="col-8">
+
+                                    <div class="form-group row">
+                                        <label for="id-admin" class="col-3">Codigo Identificación:</label>
+                                        <div class="col-8">
+                                            <input type="text" id="id-admin"class="form-control"  readonly/>
+                                        </div>
+                                    </div>
+
+                                    <br />
+
+                                    <div class="form-group row">
+                                        <label for="nombre-admin" class="col-3">Nombre Completo:</label>
+                                        <div class="col-8">
+                                            <input type="text" id="nombre-admin"class="form-control" readonly/>
+                                        </div>
+                                    </div>
+
+                                    <br />
+
+                                    <div class="form-group row">
+                                        <label for="email-admin" class="col-3">Email:</label>
+                                        <div class="col-8">
+                                            <input type="text" id="email-admin" class="form-control" readonly/>
+                                        </div>
+                                    </div>
+
+                                    <br />
+
+                                    <div class="form-group row">
+                                        <label for="password-admin" class="col-3">Contraseña:</label>
+                                        <div class="col-8">
+                                            <input type="text" id="password-admin" class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <br />
+
+                                    <div class="form-group" id="button">
+                                        <button class="btn btn-info text-center" onclick="actualizarData()">
+                                            Actualizar
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+        
+    
+
+</body>
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        jQuery.ajax({
+            url:'@Url.Action("GetInformationAdmin", "Business")',
+            type: "GET",
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                $("#id-admin").val(data.Admin.Id);
+
+                $("#nombre-admin").val(data.Admin.nameAdmin + " " + data.Admin.lastNameAdmin);
+
+                $("#email-admin").val(data.Admin.emailAdmin);
+            },
+            error: function () {
+                alert("ERROR AJAX");
+            }
+        });
+        function actualizarData() {
+            console.log($("#id-admin").val());
+            var id = $("#id-admin").val();
+            var email_parameter = $("#email-admin").val();
+            var password_parameter = $("#password-admin").val();
+
+            jQuery.ajax({
+                url: '@Url.Action("UpdatePasswordAdmin", "Business")',
+                type: 'POST',
+                data: JSON.stringify({ email: email_parameter, password :password_parameter }),
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $("#myTabContent").LoadingOverlay("hide");
+                    $("#password-admin").val("");
+                    swal("ACTUALIZADO CORRECTAMENTE!", "Revisa tu correo", "success")
+                },
+                error: function () {
+                    alert("ERROR AJAX")
+                },
+                beforeSend: function () {
+                    $("#myTabContent").LoadingOverlay("show", {
+                        imageResizeFactor: 2,
+                        text: "Cargando...",
+                        size: 14
+                    })
+                }
+            });
+        }
+    </script>
+
+
+    }
+
+
+

@@ -1,0 +1,45 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Repos - C# Web\\ProfessionalMarketWeb\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{18D74B2E-5A77-4228-9D17-2914743E68A1}|PresentationLayerAdmin\\PresentationLayer.csproj|d:\\repos - c# web\\professionalmarketweb\\presentationlayeradmin\\views\\business\\supermarketmaui.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{18D74B2E-5A77-4228-9D17-2914743E68A1}|PresentationLayerAdmin\\PresentationLayer.csproj|solutionrelative:presentationlayeradmin\\views\\business\\supermarketmaui.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SuperMarketMaui.cshtml",
+              "DocumentMoniker": "D:\\Repos - C# Web\\ProfessionalMarketWeb\\PresentationLayerAdmin\\Views\\Business\\SuperMarketMaui.cshtml",
+              "RelativeDocumentMoniker": "PresentationLayerAdmin\\Views\\Business\\SuperMarketMaui.cshtml",
+              "ToolTip": "D:\\Repos - C# Web\\ProfessionalMarketWeb\\PresentationLayerAdmin\\Views\\Business\\SuperMarketMaui.cshtml",
+              "RelativeToolTip": "PresentationLayerAdmin\\Views\\Business\\SuperMarketMaui.cshtml",
+              "ViewState": "AQIAAAUBAAAAAAAAAAAAADoAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-06-25T06:37:01.912Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

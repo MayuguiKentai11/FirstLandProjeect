@@ -1,0 +1,6 @@
+D:\Repos - C# Web\ProfessionalMarketWeb\EntityLayer\bin\Debug\EntityLayer.dll
+D:\Repos - C# Web\ProfessionalMarketWeb\EntityLayer\bin\Debug\EntityLayer.pdb
+D:\Repos - C# Web\ProfessionalMarketWeb\EntityLayer\obj\Debug\EntityLayer.csproj.AssemblyReference.cache
+D:\Repos - C# Web\ProfessionalMarketWeb\EntityLayer\obj\Debug\EntityLayer.csproj.CoreCompileInputs.cache
+D:\Repos - C# Web\ProfessionalMarketWeb\EntityLayer\obj\Debug\EntityLayer.dll
+D:\Repos - C# Web\ProfessionalMarketWeb\EntityLayer\obj\Debug\EntityLayer.pdb

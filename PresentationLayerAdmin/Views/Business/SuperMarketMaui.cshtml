@@ -1,0 +1,365 @@
+﻿@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/MauiStoreStyless.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    <title>SuperMarket Maui</title>
+</head>
+
+<body>
+    <!-- LOGICA DE INICIO DE SESIÓN -->
+    <header id="Home">
+        <div class="container">
+            <div class="logation">
+                <p style="color: white;font-size: 2em;font-weight: bold;">SuperMarket</p><p style="color: orange;font-size: 2em;font-weight: bold;">Maui</p>
+            </div>
+
+            <nav>
+                <a href="#hero">Home</a>
+                <a href="#About">About</a>
+                <a href="#Products">Products</a>
+                <a href="#Contact">Contact</a>
+            </nav>
+            @{
+                if (Session["Client"] == null)
+                {
+                    <a href="@Url.Action("LogIn","LogIn")" id="btn-start">Acceder</a>
+                }
+                else
+                {
+                    <div class="d-inline-flex">
+                        <a class="btn btn-warning me-3" href="@Url.Action("ShoppingCart", "Business")">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Cart
+                            <span class="badge bg-black text-white ms-1 rounded-pill" id="totalShoppingCartProducts">0</span>
+                        </a>
+
+                        <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0" id="navbar-user">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="@Url.Action("ProfileClient", "Business")"><b>@User.Identity.Name</b></a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("MyHistorialShopping", "Business")">Mis Compras</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("SignOutSystem", "LogIn")">Cerrar Sesión</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            }
+
+        </div>
+    </header>
+
+    <section id="hero">
+        <h1 class="visible-entry">Hora de comprar con facilidad</h1>
+        <h3 style="color: white;" class="visible-entry">"Supermercado <span style="color: orange">Maui</span>, Tu elección inteligente para una vida sin fronteras"</h3>
+    </section>
+
+
+    <div class="container-xxl py-6" id="About">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="position-relative overflow-hidden ps-5 pt-5 h-100" style="min-height: 400px;">
+                        <img class="position-absolute w-100 h-100" src="https://i0.wp.com/globalmedia-it.com/wp-content/uploads/2017/11/1.jpg?fit=800%2C500&ssl=1" alt="" style="object-fit: cover;">
+                        <img class="position-absolute top-0 start-0 bg-white pe-3 pb-3" src="https://geektime.es/wp-content/uploads/2020/12/mavic-air_flame-red_-1-e1542646586211.jpg" alt="" style="width: 200px; height: 200px;">
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="h-100">
+                        <h6 class="text-warning text-uppercase mb-2">About Us</h6>
+                        <h1 class="display-6 mb-4">Te ofrecemos una amplia variedad de productos con bajo precio</h1>
+                        <p>Nuestra sede se encuentra en LOS ANDES PAPA! en donde podrás visitarnos y disfrutar de mejor manera nuestro servicio. También contamos con una página web en donde podrás commprar de manera segura y sencilla.</p>
+                        <p class="mb-4">Nuestra mayor especialidad son los productos tecnológicos y como te conocemos, te ofrecemos un actualizado catálogo de productos que te van a interesar, con alta calidad y sobretodo a cómodo precio.</p>
+                        <div class="row g-2 mb-4 pb-2">
+                            <div class="col-sm-6">
+                                <i class="fa fa-check text-warning me-2"></i>Productos de calidad
+                            </div>
+                            <div class="col-sm-6">
+                                <i class="fa fa-check text-warning me-2"></i>Amplia variedad de categorías
+                            </div>
+                            <div class="col-sm-6">
+                                <i class="fa fa-check text-warning me-2"></i>Precios cómodos
+                            </div>
+                            <div class="col-sm-6">
+                                <i class="fa fa-check text-warning me-2"></i>Tu tienda de confianza!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid px-5 my-5" id="Products">
+        <div class="row">
+
+            <div class="col-sm-3">
+                <div class="row mb-3">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-header bg-black text-white">
+                                Categorias
+                            </div>
+                            <div class="card-body" id="containerCategorie">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-12">
+                        <div class="d-grid gap-2">
+                            <button id="btnFilterProducts" class="btn btn-dark text-white btn-block" type="button">
+                                <i class="fas fa-filter"></i>
+                                Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-sm-9" id="greatShoww">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center" id="productsShow">
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">Fancy Product</h5>
+                                    <!-- Product price-->
+                                    $40.00 - $80.00
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <hr />
+
+    <div id="Contact" class="container-fluid bg-dark text-light footer my-6 mb-0 py-6 wow fadeIn mt-5" data-wow-delay="0.1s">
+        <div class="container">
+            <div class="row g-5" id="footer-supermarketMaui">
+                <div class="col-lg-3 col-md-6" id="col-1_SuperMarket_Footer">
+                    <h4 class="text-white mb-4">Get In Touch</h4>
+                    <h2 class="text-white mb-4"><i class="fa fa-shopping-cart text-warning me-2"></i>Maui</h2>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>En los Andes PAPA!</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+51 984819414 (Numero Random)</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>test@gmail.com</p>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-4">Newsletter</h4>
+                    <form action="@Url.Action("","")" method="post">
+                        <div class="input-group">
+                            <input type="text" class="form-control p-3 border-0" placeholder="Your Email Address">
+                            <button class="btn btn-warning">Log In</button>
+                        </div>
+                    </form>
+                    <h6 class="text-white mt-4 mb-3">Follow Me</h6>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-square btn-outline-light me-1" href=""><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-square btn-outline-light me-1" href=""><i class="fab fa-youtube"></i></a>
+                        <a class="btn btn-square btn-outline-light me-0" href=""><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @Scripts.Render("~/bundles/complements")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        jQuery.ajax({
+        url: '@Url.Action("ListCategories", "Business")',
+        type: 'GET',
+        datatype: "json",
+        contentType: "application/json; charset=utf-8",
+            success: function (Data) {
+
+            $("#containerCategorie").LoadingOverlay("hide");
+            $("<div>").addClass("form-check").append(
+
+                $("<input>").addClass("form-check-input").attr({ "type": "radio", "name": "RadioButtons", "id": "radioButtons", "value": "0", "checked": "checked" }),
+                $("<label>").addClass("form-check-label").text("TODOS").attr({ "for": "radioButtons" })
+            ).appendTo("#containerCategorie");
+
+            $.each(Data.data, function (i, value) {
+                $("<div>").addClass("form-check").append(
+
+                    $("<input>").addClass("form-check-input").attr({ "type": "radio", "name": "RadioButtons", "id": "radioButton" + i, "value": value.Id }),
+                    $("<label>").addClass("form-check-label").text(value.descriptionCategory).attr({ "for": "radioButton" + i })
+                ).appendTo("#containerCategorie");
+            })
+
+        },
+        error: function () {
+            alert("ERROR AJAX")
+        },
+        beforeSend: function () {
+            $("#containerCategorie").LoadingOverlay("show", {
+                imageResizeFactor: 2,
+                text: "Cargando...",
+                size: 14
+            })
+        }
+        })
+
+        ShowProductsFilter(0);
+        TotalProductsShoppingCart();
+    })
+
+
+
+    function ShowProductsFilter(IdCategory) {
+        jQuery.ajax({
+            url: '@Url.Action("ListProducts", "Business")',
+            type: 'POST',
+            data: JSON.stringify({ idCategory: IdCategory }),
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (Data) {
+                $("#productsShow").html("");
+                $("#greatShoww").LoadingOverlay("hide");
+
+                $.each(Data.data, function (i, value) {
+                    $("<div>").addClass("col mb-5").append(
+                        $("<div>").addClass("card h-100").append(
+                            $("<img>").addClass("card-img-top").attr({ "src": "data:image/" + value.extensionImageProduct + ";base64," + value.base64Image, "style": "width:220px;height:180px" }),
+                            $("<div>").addClass("card-body p-4").append(
+                                $("<div>").addClass("text-center").append(
+                                    $("<h5>").addClass("fw-bolder").text(value.nameProduct),
+                                    "S/." + value.priceProduct.toFixed(2)
+                                )
+                            ),
+
+                            $("<div>").addClass("card-footer p-4 pt-0 border-top-0 bg-transparent").append(
+
+                                $("<div>").addClass("d-grid gap-2").append(
+                                       @if (Session["Client"] != null) {
+
+                                          @:$("<button>").addClass("btn btn-success mt-auto addShoppingCart").data("IdProduct", value.IdProduct).text("Agregar al carrito"),
+
+                                        }
+                                    $("<a>").addClass("btn btn-dark mt-auto").attr({ "href": "@Url.Action("DetailSailProduct", "Business")" + "?idProduct=" + value.IdProduct }).text("Ver Producto")
+
+                                )
+                            )
+                        )
+
+
+                    ).appendTo("#productsShow");
+                })
+
+            },
+            error: function () {
+                alert("ERROR AJAX")
+            },
+            beforeSend: function () {
+                $("#greatShoww").LoadingOverlay("show", {
+                    imageResizeFactor: 2,
+                    text: "Cargando...",
+                    size: 14
+                })
+            }
+        });
+    }
+
+
+    $("#btnFilterProducts").click(function () {
+        var IdCategoryy = $("input[name=RadioButtons]:checked").val();
+        ShowProductsFilter(IdCategoryy);
+    })
+
+    function TotalProductsShoppingCart() {
+        if ($("#totalShoppingCartProducts").length > 0) {
+            jQuery.ajax({
+                url: '@Url.Action("GetTotalShoppingCartProducts", "Business")',
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $("#totalShoppingCartProducts").text(data.Result);
+                },
+                error: function () {
+                    $("#totalShoppingCartProducts").text(0);
+                }
+            });
+        }
+    }
+
+
+    $(document).on("click", "button.addShoppingCart", function () {
+
+        jQuery.ajax({
+            url: '@Url.Action("AgregateShoppingCart", "Business")',
+            type: "POST",
+            data: JSON.stringify({ idProduct: $(this).data("IdProduct") }),
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                if (data.Answer) {
+                    TotalProductsShoppingCart();
+                    swal({
+                        title: "AGREGADO CORRECTAMENTE",
+                        text: "Desea ir al carrito?",
+                        type: "success",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-success",
+                        confirmButtonText: "Si",
+                        cancelButtonText: "No",
+                        cancelButtonClass:"btn-danger",
+                        closeOnConfirm: true,
+                    }, function () {
+
+                        window.location.href = '@Url.Action("ShoppingCart", "Business")';
+                    })
+                }
+                else {
+                    swal("NO SE PUDO AGREGAR AL CARRITO", data.Message, "error");
+                }
+
+            },
+            error: function () {
+
+            }
+        });
+
+    });
+
+</script>
+

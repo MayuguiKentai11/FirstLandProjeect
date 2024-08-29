@@ -1,0 +1,292 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/HistorialShoppingStyles.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    <title>Test Html</title>
+</head>
+<body>
+    <!-- LOGICA DE INICIO DE SESIÓN -->
+    <header id="Home" class="bg-black">
+        <div class="container">
+            <div class="logation" onclick="ReturnHome()">
+                <p style="color: white;font-size: 2em;font-weight: bold;">SuperMarket</p><p style="color: orange;font-size: 2em;font-weight: bold;">Maui</p>
+            </div>
+
+            @{
+                if (Session["Client"] == null)
+                {
+                    <a href="@Url.Action("LogIn","LogIn")" id="btn-start">Acceder</a>
+                }
+                else
+                {
+                    <div class="d-inline-flex">
+                        <a class="btn btn-warning me-3" href="@Url.Action("ShoppingCart", "Business")">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Cart
+                            <span class="badge bg-black text-white ms-1 rounded-pill" id="totalShoppingCartProducts">0</span>
+                        </a>
+
+                        <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0" id="navbar-user">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="@Url.Action("ProfileClient", "Business")"><b>@User.Identity.Name</b></a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("MyHistorialShopping", "Business")">Mis Compras</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("SignOutSystem", "LogIn")">Cerrar Sesión</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            }
+
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Historial de Compras
+        </div>
+        <div class="card-body">
+            <form id="container" action="@Url.Action("ExportReportSale","Home")" method="post">
+                <div class="row align-items-end">
+
+                    <div class="col-sm-2">
+                        <div class="mb-2">
+                            <label class="form-label">Fecha de Inicio</label>
+                            <input class="form-control" type="text" id="txtStartDay" name="startday" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="mb-2">
+                            <label class="form-label">Fecha Final</label>
+                            <input class="form-control" type="text" id="txtFinalDay" name="finalday" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="mb-2">
+                            <label class="form-label">ID de Transacción</label>
+                            <input class="form-control" type="text" id="txtIdTransaccion" name="idtransaccion" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="d-grid mb-2">
+                            <button class="btn btn-primary" id="btn-buscar" type="button" name="btnBuscar" onclick="SearchReport()">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="d-grid mb-2">
+                            <button class="btn btn-success" id="btn-volver" type="button" name="btnVolver" onclick="ReturnHome()">
+                                <i class="fas fa-sign-out-alt"></i> Volver a la Tienda
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="container">
+                <div class="row mt-5">
+                    <div class="col-sm-12" id="models-container">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @Scripts.Render("~/bundles/complements")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>
+
+<script type="text/javascript">
+    $("#txtStartDay").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
+    $("#txtFinalDay").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
+
+    function ReturnHome() {
+        window.location.href = "@Url.Action("SuperMarketMaui","Business")";
+    }
+
+    $(document).ready(function () {
+
+        jQuery.ajax({
+                url: '@Url.Action("HistorialShoppingProducts", "Business")',
+                type: "POST",
+                data: JSON.stringify({ dateStart: $("#txtStartDay").val(), dateFinal: $("#txtFinalDay").val(), idTransaction: $("#txtIdTransaccion").val() }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $("#models-container").html("");
+                    if (data.Count > 0) {
+                        $.each(data.Data, function (i, value) {
+                            $("<div>").addClass("row mb-3").append(
+                                $("<div>").addClass("col-sm-12").append(
+                                    $("<div>").addClass("card").append(
+                                        $("<div>").addClass("card-body bg-light").append(
+                                            $("<h6>").text("Id Transaccion: "
+                                                + value.IdTransaction),
+
+                                            $("<div>").addClass("table-responsive").append(
+                                                $("<table>").addClass("table table-bordered").append(
+                                                    $("<thead>").append(
+                                                        $("<tr>").append(
+                                                            $("<th>").text("Imagen"),
+                                                            $("<th>").text("Producto"),
+                                                            $("<th>").text("Precio Unitario"),
+                                                            $("<th>").text("Cantidad Comprada"),
+                                                            $("<th>").text("Sub Total")
+                                                        )
+
+                                                    ),
+                                                    $("<tbody>").addClass("bg-white").append(
+                                                        $("<tr>").append(
+                                                            $("<td>").append(
+                                                                $("<img>").addClass("card-img-top mb-5 mb-md-0").attr({ "src": "data:image/" + value.IdProduct.extensionImageProduct + ";base64," + value.IdProduct.base64Image, "style": "width:120px;height:120px" })
+                                                            ),
+                                                            $("<td>").attr({ "valign": "middle" }).append(
+                                                                value.NameProduct
+                                                            ),
+                                                            $("<td>").attr({ "valign": "middle" }).append(
+                                                                "S/. " + value.PriceProduct
+                                                            ),
+                                                            $("<td>").attr({ "valign": "middle" }).append(
+                                                                value.OrderProduct
+                                                            ),
+                                                            $("<td>").attr({ "valign": "middle" }).append(
+                                                                "S/. " + value.TotalProduct
+                                                            )
+                                                        )
+
+                                                    )
+                                                )
+
+                                            )
+                                        )
+                                    )
+                                )
+                            ).appendTo("#models-container")
+
+                        })
+                    }
+                    else {
+                        //$("<h1>").text("No se encontraron compras").appendTo("#models-container");
+                        $("<div>").addClass("row mb-3").append(
+                            $("<div>").addClass("col-sm-12 text-center").append(
+                                $("<h1>").text("No se encontraron compras")
+                            )
+                        ).appendTo("#models-container")
+                    }
+                },
+                error: function () {
+                    alert("ERROR AJAX")
+                }
+            });
+
+        $("#btn-buscar").on("click", function () {
+            jQuery.ajax({
+                url: '@Url.Action("HistorialShoppingProducts", "Business")',
+                type: "POST",
+                data: JSON.stringify({ dateStart: $("#txtStartDay").val(), dateFinal: $("#txtFinalDay").val(), idTransaction: $("#txtIdTransaccion").val() }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $("#models-container").html("");
+                    if (data.Count > 0) {
+                        $.each(data.Data, function (i, value) {
+                            $("<div>").addClass("row mb-3").append(
+                                $("<div>").addClass("col-sm-12").append(
+                                    $("<div>").addClass("card").append(
+                                        $("<div>").addClass("card-body bg-light").append(
+                                            $("<h6>").text("Id Transaccion: "
+                                                + value.IdTransaction),
+
+                                            $("<div>").addClass("table-responsive").append(
+                                                $("<table>").addClass("table table-bordered").append(
+                                                    $("<thead>").append(
+                                                        $("<tr>").append(
+                                                            $("<th>").text("Imagen"),
+                                                            $("<th>").text("Producto"),
+                                                            $("<th>").text("Precio Unitario"),
+                                                            $("<th>").text("Cantidad Comprada"),
+                                                            $("<th>").text("Sub Total")
+                                                        )
+
+                                                    ),
+                                                    $("<tbody>").addClass("bg-white").append(
+                                                        $("<tr>").append(
+                                                            $("<td>").append(
+                                                                $("<img>").addClass("card-img-top mb-5 mb-md-0").attr({ "src": "data:image/" + value.IdProduct.extensionImageProduct + ";base64," + value.IdProduct.base64Image, "style": "width:120px;height:120px" })
+                                                            ),
+                                                            $("<td>").attr({ "valign": "middle" }).append(
+                                                                value.NameProduct
+                                                            ),
+                                                            $("<td>").attr({ "valign": "middle" }).append(
+                                                                "S/. " + value.PriceProduct
+                                                            ),
+                                                            $("<td>").attr({ "valign": "middle" }).append(
+                                                                value.OrderProduct
+                                                            ),
+                                                            $("<td>").attr({ "valign": "middle" }).append(
+                                                                "S/. " + value.TotalProduct
+                                                            )
+                                                        )
+
+                                                    )
+                                                )
+
+                                            )
+                                        )
+                                    )
+                                )
+                            ).appendTo("#models-container")
+
+                        })
+                    }
+                    else {
+                        //$("<h1>").text("No se encontraron compras").appendTo("#models-container");
+                        $("<div>").addClass("row mb-3").append(
+                            $("<div>").addClass("col-sm-12 text-center").append(
+                                $("<h1>").text("No se encontraron compras")
+                            )
+                        ).appendTo("#models-container")
+                    }
+                },
+                error: function () {
+                    alert("ERROR AJAX")
+                }
+            });
+        });
+    });
+
+</script>

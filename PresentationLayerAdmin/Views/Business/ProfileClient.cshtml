@@ -1,0 +1,76 @@
+﻿@model EntityLayer.Client
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/Content/profileClientStyle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300&family=Poppins:wght@100&display=swap" rel="stylesheet">
+    <title>ProfileClient</title>
+    
+</head>
+<body>
+    <section>
+        <div class="container" style="height: 100%;width: 100%; margin-top: 30px;">
+            <img style="text-align: center;" src="https://laeradigitaltiernohome.files.wordpress.com/2019/01/mundo-conectado.jpg" alt="Imagen_decoracion" />
+            <h3 style="text-align: center;">Información Personal</h3>
+            <form>
+                <h4 style="margin-left: 60px;">Nombre</h4>
+                <input id="input-name" style="width: 450px; margin-left: 60px; text-align: left; font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-size: medium;" type="text" required readonly autocomplete="off" value="">
+                <h4 style="margin-left: 60px;">Correo Electronico</h4>
+                <input id="input-email" name="email" style="width: 450px; margin-left: 60px; font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-size: medium;" type="email" readonly required autocomplete="off" value="myuguipro.king@gmail.com">
+                <h4 style="margin-left: 60px;"> Contraseña</h4>
+                <input id="input-password" name="password" style="width: 450px; margin-left: 60px ; margin-bottom: 25px; font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-size: medium;" type="password" required autocomplete="off" value="">
+                <button class="btn_aaa" style="margin-top: 5px; margin-left: 220px;border: 3px solid;">Guardar</button>
+            </form>
+        </div>
+    </section>
+    @Scripts.Render("~/bundles/complements")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        jQuery.ajax({
+            url: '@Url.Action("InformationClientSession", "Business")',
+            type: "GET",
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                let name = data.Nombre;
+                let email = data.Email;
+                $("#input-email").val(email);
+                $("#input-name").val(name);
+            },
+            error: function () {
+                alert("ERROR AJAX");
+            }
+        });
+        @*"@Url.Action("UpdatePassword","Business")"*@
+
+        $(".btn_aaa").on("click", function () {
+            var password_input = $("#input-password").val();
+            if (password_input != "") {
+                jQuery.ajax({
+                    url: '@Url.Action("UpdatePassword","Business")',
+                    type: "POST",
+                    data: JSON.stringify({email: $("#input-email").val(),password: $("#input-password").val()}),
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function () {
+                        alert("CORREO ENVIADO!");
+                    },
+                    error: function () {
+                        alert("CORREO ENVIADO!");
+                    }
+                });
+            }
+        });
+    });
+</script>
+

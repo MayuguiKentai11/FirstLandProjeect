@@ -1,0 +1,165 @@
+﻿
+@model EntityLayer.Product 
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/HistorialShoppingStyles.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    <title>DetailSailProduct</title>
+</head>
+<body>
+
+    <!-- LOGICA DE INICIO DE SESIÓN -->
+    <header id="Home" class="bg-black">
+        <div class="container">
+            <div class="logation" onclick="ReturnHome()">
+                <p style="color: white;font-size: 2em;font-weight: bold;">SuperMarket</p><p style="color: orange;font-size: 2em;font-weight: bold;">Maui</p>
+            </div>
+
+            @{
+                if (Session["Client"] == null)
+                {
+                    <a href="@Url.Action("LogIn","LogIn")" id="btn-start">Acceder</a>
+                }
+                else
+                {
+                    <div class="d-inline-flex">
+                        <a class="btn btn-warning me-3" href="@Url.Action("ShoppingCart", "Business")">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Cart
+                            <span class="badge bg-black text-white ms-1 rounded-pill" id="totalShoppingCartProducts">0</span>
+                        </a>
+
+                        <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0" id="navbar-user">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="@Url.Action("ProfileClient", "Business")"><b>@User.Identity.Name</b></a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("MyHistorialShopping", "Business")">Mis Compras</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("SignOutSystem", "LogIn")">Cerrar Sesión</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            }
+
+        </div>
+    </header>
+
+
+
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="row gx-4 gx-lg-5 align-items-center">
+                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="data:image/@Html.DisplayTextFor(p => p.extensionImageProduct);base64,@Html.DisplayTextFor(m=>m.base64Image)" alt="..." /></div>
+                <div class="col-md-6">
+                    <div class="small mb-1">@Html.DisplayTextFor(p => p.idCategory.descriptionCategory)</div>
+                    <h1 class="display-5 fw-bolder">@Html.DisplayTextFor(p => p.nameProduct) </h1>
+                    <div class="fs-5 mb-5">
+                        @*<span class="text-decoration-line-through"></span>*@
+                        <span>S/. @Html.DisplayTextFor(p => p.priceProduct)</span>
+                    </div>
+                    <p class="lead">@Html.DisplayTextFor(p => p.descriptionProduct)</p>
+                    <div class="d-flex">
+
+                        <a class="btn btn-danger w-50 text-center me-3" href="@Url.Action("SuperMarketMaui","Business")">
+                            <i class="fas fa-undo-alt"></i> Volver
+                        </a>
+                        @if (Session["Client"] != null)
+                        {
+                            @*<input class="form-control text-center me-3" id="inputQuantity" type="number" value="1" style="max-width: 3rem" />*@
+                            <button id="addShoppingButton" class="btn btn-success flex-shrink-0 w-50 addShoppingCart" type="button" data-IdProduct="@Html.DisplayTextFor(p=>p.IdProduct)" onclick="AgregarCarritoVistaProducto()">
+                                <i class="fas fa-cart-plus"></i>
+                                AGREGAR AL CARRITO
+                            </button>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    @Scripts.Render("~/bundles/complements")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        TotalProductsShoppingCart();
+    });
+
+    function TotalProductsShoppingCart() {
+        if ($("#totalShoppingCartProducts").length > 0) {
+            jQuery.ajax({
+                url: '@Url.Action("GetTotalShoppingCartProducts", "Business")',
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $("#totalShoppingCartProducts").text(data.Result);
+                },
+                error: function () {
+                    $("#totalShoppingCartProducts").text(0);
+                }
+            });
+        }
+    }
+
+    function AgregarCarritoVistaProducto() {
+        // CADA VEZ QUE USES DATA-ID POR EJEMPLO, SIEMPRE VERIFICA LAS PROPIEDADES DEL OBJETO JSON COMO DATA()
+        // YA QUE TE PUEDE SALIR ERROR SI LLAMAS A UNA PROPIEDAD QUE NO EXISTE.
+        // EN RESUMEN SIEMPRE INSPECCIONA EL VALOR NATURAL DE UN BUTTON ASÍ: $("#ID").data()
+        // DE ESTA MANERA LLAMAMOS A SUS PROPIEDADES O VALOR NATURAL ENVIADO F12!
+        console.log($(".addShoppingCart").data("idproduct"));
+        // CORREGIR E INSPECCIONAR ESTA PARTE
+        jQuery.ajax({
+            url: '@Url.Action("AgregateShoppingCart", "Business")',
+            type: "POST",
+            data: JSON.stringify({ idProduct: $("#addShoppingButton").data("idproduct") }),
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+
+                if (data.Answer) {
+                    TotalProductsShoppingCart();
+                    swal({
+                        title: "AGREGADO CORRECTAMENTE",
+                        text: "Desea ir al carrito?",
+                        type: "success",
+                        showCancelButton:true,
+                        confirmButtonClass: "btn-success",
+                        confirmButtonText: "SI",
+                        cancelButtonClass:"btn-danger",
+                        cancelButtonText:"NO",
+                        closeOnConfirm: true,
+                    }, function () {
+                       window.location.href = '@Url.Action("ShoppingCart", "Business")';
+                    })
+                }
+                else {
+                    swal("NO SE PUDO AGREGAR AL CARRITO", data.Message, "error");
+                }
+
+            },
+            error: function () {
+                alert("ERROR")
+            }
+        });
+    }
+
+
+
+</script>

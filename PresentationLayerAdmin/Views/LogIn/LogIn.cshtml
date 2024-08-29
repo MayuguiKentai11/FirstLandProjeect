@@ -1,0 +1,39 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/Content/styleSignIn.css">
+    <title>Log In SuperMarket</title>
+</head>
+<body>
+    <div class="box">
+        <form action="@Url.Action("LogIn","LogIn")" method="post">
+            <h2>Log In</h2>
+            <div class="inputBox">
+                <input type="text" name="email" autocomplete="off" required>
+                <span>Email</span>
+                <i></i>
+            </div>
+            <div class="inputBox">
+                <input type="password" name="password" autocomplete="off" required>
+                <span>Password</span>
+                <i></i>
+            </div>
+            <button type="submit">Log In</button>
+            <div class="links">
+                <a href="@Url.Action("UpdatePassword","LogIn")">Forgot password?</a>
+                <a href="@Url.Action("RegisterAccount","LogIn")">Sign In</a>
+            </div>
+        </form>
+    </div>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
